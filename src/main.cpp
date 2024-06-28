@@ -273,8 +273,8 @@ public:
         }
 
         auto instanceCreateFlags = instanceSpec.instanceCreateFlags();
-        auto enabledLayerNames = convertToCStrings(instanceLayers);
-        auto enabledExtensionNames = convertToCStrings(instanceExtensions);
+        auto enabledLayerNames = SystemFactory::convertToCStrings(instanceLayers);
+        auto enabledExtensionNames = SystemFactory::convertToCStrings(instanceExtensions);
 
         auto appInfo = VkApplicationInfo {};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -711,11 +711,11 @@ public:
 
             throw std::runtime_error(errorMessage);
         }
-        auto enabledExtensions = convertToCStrings(logicalDeviceSpec.requiredExtensions());
+        auto enabledExtensions = LogicalDeviceFactory::convertToCStrings(logicalDeviceSpec.requiredExtensions());
         createInfo.enabledExtensionCount = enabledExtensions.size();
         createInfo.ppEnabledExtensionNames = enabledExtensions.data();
         
-        auto validationLayersCStrings = convertToCStrings(validationLayers);
+        auto validationLayersCStrings = LogicalDeviceFactory::convertToCStrings(validationLayers);
 
         if (enableValidationLayers) {
             createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
