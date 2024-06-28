@@ -52,19 +52,6 @@ using Platform = VulkanEngine::VulkanPlatform::PlatformInfoProvider::Platform;
 using PlatformInfoProvider = VulkanEngine::VulkanPlatform::PlatformInfoProvider;
 
 
-std::vector<const char*> convertToCStrings(const std::vector<std::string>& strings) {
-    auto cStrings = std::vector<const char*> {};
-    cStrings.reserve(strings.size());
-    std::transform(
-        strings.begin(), 
-        strings.end(), 
-        std::back_inserter(cStrings),
-        [](const std::string& string) { return string.c_str(); }
-    );
-    
-    return cStrings;
-}
-
 struct QueueFamilyIndices final {
     std::optional<uint32_t> graphicsFamily;
     std::optional<uint32_t> presentFamily;
@@ -316,6 +303,19 @@ public:
     }
 private:
     PlatformInfoProvider* m_infoProvider;
+
+    static std::vector<const char*> convertToCStrings(const std::vector<std::string>& strings) {
+        auto cStrings = std::vector<const char*> {};
+        cStrings.reserve(strings.size());
+        std::transform(
+            strings.begin(), 
+            strings.end(), 
+            std::back_inserter(cStrings),
+            [](const std::string& string) { return string.c_str(); }
+        );
+    
+        return cStrings;
+    }
 };
 
 class PhysicalDeviceSpec final {
@@ -743,6 +743,19 @@ private:
     VkPhysicalDevice m_physicalDevice;
     VkSurfaceKHR m_surface;
     PlatformInfoProvider* m_infoProvider;
+
+    static std::vector<const char*> convertToCStrings(const std::vector<std::string>& strings) {
+        auto cStrings = std::vector<const char*> {};
+        cStrings.reserve(strings.size());
+        std::transform(
+            strings.begin(), 
+            strings.end(), 
+            std::back_inserter(cStrings),
+            [](const std::string& string) { return string.c_str(); }
+        );
+    
+        return cStrings;
+    }
 };
 
 class VulkanDebugMessenger final {
@@ -1456,7 +1469,6 @@ private:
         newEngine->createInstance();
         newEngine->createDebugMessenger();
         newEngine->createGpuDevice();
-
         newEngine->createWindowSystem();
 
         return newEngine;
