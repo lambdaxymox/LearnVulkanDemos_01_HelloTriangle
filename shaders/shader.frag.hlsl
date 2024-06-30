@@ -1,8 +1,18 @@
 struct PS_Input {
-    float4 Position : SV_POSITION;
-    float4 Color : COLOR0;
+    float4 position : SV_POSITION;
+    float4 color : COLOR0;
 };
 
-float4 main(PS_Input pin) : SV_TARGET {
-    return pin.Color;
+struct PS_Output {
+    float4 fragColor : SV_TARGET0;
+};
+
+
+PS_Output main(PS_Input input) {
+    float4 outFragColor = input.color;
+
+    PS_Output output;
+    output.fragColor = outFragColor;
+
+    return output;
 }
