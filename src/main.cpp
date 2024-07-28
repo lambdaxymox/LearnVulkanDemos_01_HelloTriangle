@@ -24,15 +24,12 @@
 #include <GLFW/glfw3.h>
 #endif // GLFW_INCLUDE_VULKAN
 
+
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
 const std::vector<std::string> VALIDATION_LAYERS = std::vector<std::string> { 
     VulkanEngine::Constants::VK_LAYER_KHRONOS_validation
-};
-
-const std::vector<const char*> deviceExtensions = std::vector<const char*> {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
 #ifdef NDEBUG
@@ -1849,12 +1846,15 @@ class App {
             // makes the viewport and scissor rectangle for this pipeline immutable.
             // Any changes to these values would require a new pipeline to be created with
             // the new values.
-            // VkPipelineViewportStateCreateInfo viewportState{};
-            // viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-            // viewportState.viewportCount = 1;
-            // viewportState.pViewports = &viewport;
-            // viewportState.scissorCount = 1;
-            // viewportState.pScissors = &scissor;
+            // ```
+            // const auto viewportState = VkPipelineViewportStateCreateInfo {
+            //     .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+            //     .viewportCount = 1,
+            //     .pViewports = &viewport,
+            //     .scissorCount = 1,
+            //     .pScissors = &scissor,
+            // };
+            // ```
             const auto viewportState = VkPipelineViewportStateCreateInfo {
                 .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
                 .viewportCount = 1,
@@ -2023,8 +2023,10 @@ class App {
                 throw std::runtime_error("failed to begin recording command buffer!");
             }
 
-            const auto clearValue = VkClearValue {
-                .color = VkClearColorValue { { 0.0f, 0.0f, 0.0f, 1.0f } },
+            // NOTE: The order of `clearValues` should be identical to the order of the attachments
+            // in the render pass.
+            const auto clearValues = std::array<VkClearValue, 1> {
+                VkClearValue { .color = VkClearColorValue { { 0.0f, 0.0f, 0.0f, 1.0f } } },
             };
 
             const auto renderPassInfo = VkRenderPassBeginInfo {
@@ -2033,8 +2035,8 @@ class App {
                 .framebuffer = m_swapChainFramebuffers[imageIndex],
                 .renderArea.offset = VkOffset2D { 0, 0 },
                 .renderArea.extent = m_swapChainExtent,
-                .clearValueCount = 1,
-                .pClearValues = &clearValue,
+                .clearValueCount = static_cast<uint32_t>(clearValues.size()),
+                .pClearValues = clearValues.data(),
             };
 
             vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
