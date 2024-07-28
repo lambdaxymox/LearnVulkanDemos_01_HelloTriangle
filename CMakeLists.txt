@@ -82,8 +82,6 @@ add_subdirectory(external/fmt-10.2.0)
 add_subdirectory(external/stb)
 add_subdirectory(external/tiny_obj_loader)
 
-# add_subdirectory(internal/vulkan_engine)
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 
 add_executable(LearnVulkanDemos_01_HelloTriangle)
@@ -92,7 +90,6 @@ target_sources(LearnVulkanDemos_01_HelloTriangle PRIVATE
     src/engine.cpp
 )
 target_link_libraries(LearnVulkanDemos_01_HelloTriangle PRIVATE Vulkan::Vulkan)
-# target_link_libraries(LearnVulkanDemos_01_HelloTriangle PRIVATE vulkan_engine)
 target_link_libraries(LearnVulkanDemos_01_HelloTriangle PRIVATE glfw)
 target_link_libraries(LearnVulkanDemos_01_HelloTriangle PRIVATE glm)
 target_link_libraries(LearnVulkanDemos_01_HelloTriangle PRIVATE fmt)
