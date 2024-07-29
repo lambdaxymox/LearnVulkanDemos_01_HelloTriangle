@@ -86,6 +86,7 @@ add_executable(LearnVulkanDemos_01_HelloTriangle)
 target_sources(LearnVulkanDemos_01_HelloTriangle PRIVATE
     src/main.cpp
     src/engine.cpp
+    src/engine_impl_fmt.cpp
 )
 target_link_libraries(LearnVulkanDemos_01_HelloTriangle PRIVATE Vulkan::Vulkan)
 target_link_libraries(LearnVulkanDemos_01_HelloTriangle PRIVATE glfw)
