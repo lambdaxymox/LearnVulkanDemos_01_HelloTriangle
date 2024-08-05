@@ -22,6 +22,9 @@
 #include <GLFW/glfw3.h>
 #endif // GLFW_INCLUDE_VULKAN
 
+#include <compile_glsl_shaders/shaders_glsl.h>
+#include <compile_hlsl_shaders/shaders_hlsl.h>
+
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -32,15 +35,23 @@ const int MAX_FRAMES_IN_FLIGHT = 2;
 using Engine = VulkanEngine::Engine;
 
 
-class App {
+class App final {
     public:
-        void run() {
-            this->initEngine();
-            this->mainLoop();
+        explicit App() = default;
+
+        ~App() {
             this->cleanup();
+        }
+
+        void run() {
+            this->initApp();
+            this->mainLoop();
         }
     private:
         std::unique_ptr<Engine> m_engine;
+
+        std::unordered_map<std::string, std::vector<uint8_t>> m_glslShaders;
+        std::unordered_map<std::string, std::vector<uint8_t>> m_hlslShaders;
 
         std::vector<VkCommandBuffer> m_commandBuffers;
 
@@ -88,8 +99,18 @@ class App {
             m_engine = std::move(engine);
         }
 
-        void initEngine() {
+        void createShaderBinaries() {
+            const auto glslShaders = shaders_glsl::createGlslShaders();
+            const auto hlslShaders = shaders_hlsl::createHlslShaders();
+
+            m_glslShaders = std::move(glslShaders);
+            m_hlslShaders = std::move(hlslShaders);
+        }
+
+        void initApp() {
             this->createEngine();
+
+            this->createShaderBinaries();
 
             this->createCommandBuffers();
             this->createSwapChain();
@@ -320,8 +341,12 @@ class App {
         }
 
         void createGraphicsPipeline() {
+            /*
             const auto vertexShaderModule = m_engine->createShaderModuleFromFile("shaders/shader.vert.hlsl.spv");
             const auto fragmentShaderModule = m_engine->createShaderModuleFromFile("shaders/shader.frag.hlsl.spv");
+            */
+            const auto vertexShaderModule = m_engine->createShaderModule(m_hlslShaders.at("shader.vert.hlsl"));
+            const auto fragmentShaderModule = m_engine->createShaderModule(m_hlslShaders.at("shader.frag.hlsl"));
 
             const auto vertexShaderStageInfo = VkPipelineShaderStageCreateInfo {
                 .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
